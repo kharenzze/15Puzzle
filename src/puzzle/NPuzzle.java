@@ -682,6 +682,7 @@ public class NPuzzle {
             cerrados.add(0,current);
         }
         pasos = plan(cerrados, this);
+        System.out.println(memoria);
         return pasos;
     }
 
@@ -728,6 +729,7 @@ public class NPuzzle {
             cerrados.add(0,current);
         }
         pasos = plan(cerrados, this);
+        System.out.println(memoria);
         return pasos;
     }
 }

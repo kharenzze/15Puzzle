@@ -51,7 +51,7 @@ public class Main {
         if (nodos.size()<=0)
             System.out.println("Solución NO encontrada.");
         else {
-            System.out.println("Solución encontrada. Nodos vistos:"+nodos.size());//+"\n ->"+nodos)
+            System.out.println("Solución encontrada. Numero de pasos:"+nodos.size());//+"\n ->"+nodos)
         }
         System.out.println("Tiempo ="+(System.currentTimeMillis()-tiempo_inicial)/1000.+"seg");
 

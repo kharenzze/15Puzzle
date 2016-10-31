@@ -26,4 +26,9 @@ public class Memory {
             return false;
         }
     }
+
+    @Override
+    public String toString() {
+        return "Nodos distintos visitados:" + count;
+    }
 }
