@@ -400,7 +400,7 @@ public class NPuzzle {
         //coger pos hueco
         int hueco = 0;
         while (this.tablero.get(hueco) != 0) hueco++;
-        
+
         if (movimiento == IZQUIERDA) {
             if (hueco == 0 || hueco % raiz == 0)
                 return false;

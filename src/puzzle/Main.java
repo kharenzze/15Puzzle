@@ -25,6 +25,8 @@ public class Main {
             n=8;
             puzzle= new NPuzzle(n);
 
+            while(!puzzle.resoluble())puzzle = new NPuzzle(n);
+
         } else {
             n=Integer.valueOf(args[1]);
             puzzle= new NPuzzle(args[0],n);
