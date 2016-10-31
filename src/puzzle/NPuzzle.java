@@ -231,7 +231,6 @@ public class NPuzzle {
      * distancia de Hamming, que nos da el número de casillas mal colocadas. Si todas
      * están mal colocadas devolverá n y si están todas bien colocadas devolverá 0.
      *
-     * @param puzzle del cual queremos calcular la heurística.
      * @return distancia de Hamming del puzzle
      */
     public int heuristica2() {
@@ -250,7 +249,6 @@ public class NPuzzle {
      * distancia Manhattan, que nos da la suma de las distancias desde la posición
      * actual de cada ficha hasta su posición original.
      *
-     * @param puzzle del cual queremos calcular la heurística.
      * @return distancia de Hamming del puzzle
      */
     public int heuristica() {
@@ -333,7 +331,6 @@ public class NPuzzle {
      * a está antes que b y a>b. Para calcular las inversiones se descargta el
      * hueco y se disponen todas las piezas consecutivamente (como en un vector).
      *
-     * @param puzzle a comprobar
      * @return si tiene solución o no.
      */
     boolean resoluble() {
