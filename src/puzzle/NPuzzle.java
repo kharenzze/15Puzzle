@@ -654,7 +654,12 @@ public class NPuzzle {
         memoria.isViewed(this);
         abiertos.add(this);
         ArrayList<Integer> posibles = new ArrayList<>();
+
+        Timer timer = new Timer();
         while (!goal){
+            //comprobar tiempo
+            if (timer.duration() > Main.TMAXmillis) return pasos;
+
             //seleccionar
             current = abiertos.get(0);
             //comprobar si objetivo

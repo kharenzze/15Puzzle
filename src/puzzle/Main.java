@@ -13,6 +13,7 @@ public class Main {
      * CTes. para indicar los segundos máximos de espera
      */
     public static final int TMAX = 180;
+    public static final int TMAXmillis = 180000;
 
     public static void main(String[] args) {
         int n;
