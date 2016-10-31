@@ -628,4 +628,40 @@ public class NPuzzle {
         }
         return movimientos;
     }
+    /*---------------------------------------------------------------------------*/
+
+    public ArrayList<Integer> busquedaProfundidad(){
+        ArrayList<NPuzzle> abiertos = new ArrayList<>(),
+                cerrados= new ArrayList<>();
+        Memory memoria = new Memory();
+        ArrayList<Integer> pasos = new ArrayList<>();
+        NPuzzle current, newPuzzle;
+        boolean goal = false;
+
+        memoria.isViewed(this);
+        abiertos.add(this);
+        ArrayList<Integer> posibles = new ArrayList<>();
+        while (!goal){
+            //seleccionar
+            current = abiertos.get(0);
+            //comprobar si objetivo
+            goal = current.objetivo();
+
+            //expandir
+            posibles = current.posiblesMovimientos();
+            for (int i : posibles){
+                newPuzzle = new NPuzzle(current);
+                newPuzzle.mueveInseguro(i);
+                if (!memoria.isViewed(newPuzzle)){
+                    abiertos.add(1,newPuzzle);
+                }
+            }
+            //mover current a cerrados.
+            abiertos.remove(current);
+            cerrados.add(0,current);
+        }
+        pasos = plan(cerrados, this);
+        return pasos;
+    }
+
 }

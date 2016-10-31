@@ -14,7 +14,7 @@ public class Memory {
         this.count = 0;
     }
 
-    public boolean check(NPuzzle puzzle){
+    public boolean isViewed(NPuzzle puzzle){
         int hash =puzzle.tablero.hashCode();
 
         boolean status = this.table.getOrDefault(hash, false);
