@@ -44,6 +44,11 @@ public class NPuzzle {
     int h;
 
     /**
+     * Raiz de n. Estatico, siempre el mismo valor en un mismo juego
+     */
+    static int raiz;
+
+    /**
      * CTes. para las direcciones del hueco
      */
     public static final int ARRIBA = 1;
@@ -62,6 +67,8 @@ public class NPuzzle {
      * @param n       indica el tamaño del tablero. Lo rormal 8 ó 15 (8-puzzle/15puzzle)
      */
     public NPuzzle(String fichero, int n) {
+
+        NPuzzle.raiz = (int)Math.sqrt(n+1);
 
         //Guardamos el n si es correcto
         if (Math.sqrt(n + 1) != Math.round(Math.sqrt(n + 1))) {
@@ -102,6 +109,9 @@ public class NPuzzle {
      * @param n indica el tamaño del tablero. Lo rormal 8 ó 15 (8-puzzle/15puzzle)
      */
     public NPuzzle(int n) {
+
+        NPuzzle.raiz = (int)Math.sqrt(n+1);
+
         //Guardamos el n si es correcto
         if (Math.sqrt(n + 1) != Math.round(Math.sqrt(n + 1))) {
             System.out.println("ERROR: Imposible usar n=" + n + " Usando n=8");
@@ -390,9 +400,7 @@ public class NPuzzle {
         //coger pos hueco
         int hueco = 0;
         while (this.tablero.get(hueco) != 0) hueco++;
-
-        //Cogemos la raiz de n+1 pues nos hará falta para mirar movimientos válidos.
-        int raiz = (int) Math.sqrt(n + 1);
+        
         if (movimiento == IZQUIERDA) {
             if (hueco == 0 || hueco % raiz == 0)
                 return false;
