@@ -643,7 +643,7 @@ public class NPuzzle {
     }
     /*---------------------------------------------------------------------------*/
 
-    public ArrayList<Integer> busquedaProfundidad(){
+    public ArrayList<Integer> busquedaPrimeroProfundidad(){
         ArrayList<NPuzzle> abiertos = new ArrayList<>(),
                 cerrados= new ArrayList<>();
         Memory memoria = new Memory();
@@ -661,7 +661,11 @@ public class NPuzzle {
             if (timer.duration() > Main.TMAXmillis) return pasos;
 
             //seleccionar
-            current = abiertos.get(0);
+            try {
+                current = abiertos.get(0);
+            }catch (Error e){
+                return pasos;//abiertos está vacio -> no hay solución
+            }
             //comprobar si objetivo
             goal = current.objetivo();
 
