@@ -46,7 +46,7 @@ public class Main {
         long tiempo_inicial=System.currentTimeMillis();
         NPuzzle copia=new NPuzzle(puzzle);
         ArrayList<Integer> movs=null;
-        ArrayList<NPuzzle> nodos=copia.busquedaAleatoria();
+        ArrayList<Integer> nodos=copia.busquedaAleatoriaMejorada();
         if (nodos.size()<=0)
             System.out.println("Solución NO encontrada.");
         else {

@@ -481,6 +481,57 @@ public class NPuzzle {
 
     }
     /*---------------------------------------------------------------------------*/
+    /**
+     * Fuerza el movimiento, sin comprobar si es posible hacerlo
+     * @param movimiento dirección del movimiento del hueco
+     * @return
+     */
+    public boolean mueveInseguro(int movimiento) {
+
+        switch(movimiento){
+            case IZQUIERDA:
+                this.moveHoleTo(this.posicionHueco-1);
+                this.g++; //actualizamos función costo
+                this.h=heuristica(); //actualizamos función heurística
+                this.padre=inverso(movimiento);
+                return true;
+            case DERECHA:
+                this.moveHoleTo(this.posicionHueco+1);
+                this.g++; //actualizamos función costo
+                this.h=heuristica(); //actualizamos función heurística
+                this.padre=inverso(movimiento);
+                return true;
+            case ARRIBA:
+                this.moveHoleTo(this.posicionHueco-raiz);
+                this.g++; //actualizamos función costo
+                this.h=heuristica(); //actualizamos función heurística
+                this.padre=inverso(movimiento);
+                return true;
+            case ABAJO:
+                this.moveHoleTo(this.posicionHueco+raiz);
+                this.g++; //actualizamos función costo
+                this.h=heuristica(); //actualizamos función heurística
+                this.padre=inverso(movimiento);
+                return true;
+        }
+        //Movimiento erróneo
+        throw new Error("Movimiento invalido");
+    }
+    /*---------------------------------------------------------------------------*/
+    /**
+     * Devuelve una lista con los posibles movimientos
+     * @return lista con los posibles movimientos
+     */
+    public ArrayList<Integer> posiblesMovimientos(){
+        ArrayList<Integer> posibles = new ArrayList<Integer>();
+
+        if (!(this.posicionHueco==0 || this.posicionHueco%raiz==0)) posibles.add(IZQUIERDA);
+        if (!(this.posicionHueco==n || (this.posicionHueco+1)%raiz==0)) posibles.add(DERECHA);
+        if (!(this.posicionHueco>=0 && this.posicionHueco<raiz)) posibles.add(ARRIBA);
+        if (!(this.posicionHueco<=n && this.posicionHueco>=raiz*(raiz-1))) posibles.add(ABAJO);
+
+        return posibles;
+    }
 
     /**
      * Este método realiza una búsqueda aleatoria de la solución de un
@@ -490,17 +541,17 @@ public class NPuzzle {
      * está vacía es que no se ha encontrado ninguna solución o el tablero pasado era
      * el objetivo.
      */
-    public ArrayList<NPuzzle> busquedaAleatoria() {
+    public ArrayList<Integer> busquedaAleatoria() {
 
         int movimiento;
         int movPadre = -1;/*Movimiento para llegar al padre*/
-        ArrayList<NPuzzle> vistos = new ArrayList<>(); /*Lista de nodos vistos*/
+        ArrayList<Integer> vistos = new ArrayList<>(); /*Lista de nodos vistos*/
 
         long tiempo_inicial = System.currentTimeMillis();
         while (!this.objetivo()) {
             movimiento = (int) (Math.random() * 5);
             if (movimiento != movPadre && this.mueve(movimiento)) {
-                vistos.add(0, new NPuzzle(this));
+                vistos.add(0, movimiento);
                 movPadre = inverso(movimiento);
             }
 
@@ -508,6 +559,39 @@ public class NPuzzle {
             double tiempo_total = (System.currentTimeMillis() - tiempo_inicial) / 1000.;
             if (tiempo_total > 60/*TMAX*/) {
                 System.out.println("Vistos=" + vistos.size());
+                return new ArrayList<>();
+            }
+        }
+        return vistos;
+    }
+    /*---------------------------------------------------------------------------*/
+    /**
+     Este método realiza una búsqueda aleatoria de la solución de un
+     n-puzzle, durante TMAX segundos.
+     @return la lista de movimiento realizados para llegar al estado objetivo, si
+     está vacía es que no se ha encontrado ninguna solución o el tablero pasado era
+     el objetivo.
+     */
+    public ArrayList<Integer> busquedaAleatoriaMejorada() {
+
+        int movimiento;
+        int movPadre=-1;/*Movimiento para llegar al padre*/
+        ArrayList<Integer> posibles = new ArrayList<>();
+        ArrayList<Integer> vistos=new ArrayList<>(); /*Lista de nodos vistos*/
+
+        long tiempo_inicial=System.currentTimeMillis();
+        while (!this.objetivo()) {
+            posibles = this.posiblesMovimientos();
+            movimiento = posibles.get((int)(Math.random()*posibles.size()));
+            if (movimiento!=movPadre && this.mueve(movimiento)) {
+                vistos.add(0,movimiento);
+                movPadre=inverso(movimiento);
+            }
+
+            /*Si llevamos más de TMAX segundos, no hemos encontrado solución*/
+            double tiempo_total=(System.currentTimeMillis()-tiempo_inicial);
+            if (tiempo_total>60000/*TMAX*/){
+                System.out.println("Vistos="+vistos.size());
                 return new ArrayList<>();
             }
         }
