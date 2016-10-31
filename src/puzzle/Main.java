@@ -47,13 +47,30 @@ public class Main {
         long tiempo_inicial=System.currentTimeMillis();
         NPuzzle copia=new NPuzzle(puzzle);
         ArrayList<Integer> movs=null;
-        ArrayList<Integer> nodos=copia.busquedaProfundidadIterativa();
+        ArrayList<Integer> nodos=copia.busquedaProfundidadIterativa(15, null);
+
         if (nodos.size()<=0)
             System.out.println("Solución NO encontrada.");
         else {
             System.out.println("Solución encontrada. Numero de pasos:"+nodos.size());//+"\n ->"+nodos)
         }
         System.out.println("Tiempo ="+(System.currentTimeMillis()-tiempo_inicial)/1000.+"seg");
+
+
+
+
+        tiempo_inicial=System.currentTimeMillis();
+        ArrayList<Integer> nodos2=copia.busquedaProfundidadIterativaHibrida(15, null);
+
+        if (nodos.size()<=0)
+            System.out.println("Solución NO encontrada.");
+        else {
+            System.out.println("Solución encontrada. Numero de pasos:"+nodos2.size());//+"\n ->"+nodos)
+        }
+        System.out.println("Tiempo ="+(System.currentTimeMillis()-tiempo_inicial)/1000.+"seg");
+
+
+
 
         /*Guardamos la salida, si nos han dado un fichero para guardarlo*/
         if (salida!=null && movs!=null) {

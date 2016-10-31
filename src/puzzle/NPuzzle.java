@@ -645,7 +645,7 @@ public class NPuzzle {
                 cerrados= new ArrayList<>();
         Memory memoria = new Memory();
         ArrayList<Integer> pasos = new ArrayList<>(),
-                posibles = new ArrayList<>();
+                posibles;
         NPuzzle current, newPuzzle;
         boolean goal = false;
 
@@ -698,7 +698,7 @@ public class NPuzzle {
         Memory memoria = new Memory();
 
         ArrayList<Integer> pasos = new ArrayList<>(),
-                posibles = new ArrayList<>();
+                posibles;
 
         NPuzzle current, newPuzzle;
         boolean goal = false,
@@ -726,7 +726,7 @@ public class NPuzzle {
                     newPuzzle = null;
                     pasos = null;
                     posibles = null;
-                    return this.busquedaProfundidadIterativa(profundidadLimite +1, timer);
+                    return this.busquedaProfundidadIterativa(profundidadLimite+1, timer);
                 }else{
                     return pasos;//abiertos está vacio -> no hay solución
                 }
@@ -756,21 +756,101 @@ public class NPuzzle {
         return pasos;
     }
 
-    /*---------------------------------------------------------------------------*/
-
-    public ArrayList<Integer> busquedaPrimeroAnchura(){
+    public ArrayList<Integer> busquedaProfundidadIterativaHibrida(int profundidadLimite, Timer timer){
         ArrayList<NPuzzle> abiertos = new ArrayList<>(),
-                cerrados= new ArrayList<>();
+                cerrados = new ArrayList<>(),
+                frontera = new ArrayList<>();
+
         Memory memoria = new Memory();
+
         ArrayList<Integer> pasos = new ArrayList<>(),
-                posibles = new ArrayList<>();
+                posibles;
+
         NPuzzle current, newPuzzle;
-        boolean goal = false;
+        boolean goal = false,
+                limiteAlcanzado = false;
 
         memoria.isViewed(this);
         abiertos.add(this);
 
-        Timer timer = new Timer();
+        if (timer == null)timer = new Timer();
+
+        while (!goal){
+            //comprobar tiempo
+            if (timer.duration() > Main.TMAXmillis) return pasos;
+
+            //seleccionar
+            try {
+                current = abiertos.get(0);
+            }catch (Exception e){
+                if (limiteAlcanzado){
+                    //limpiar memoria de objetos
+                    abiertos = null;
+                    current = null;
+                    newPuzzle = null;
+                    pasos = null;
+                    posibles = null;
+                    return this.busquedaPrimeroAnchura(frontera,cerrados,timer,memoria);
+                }else{
+                    return pasos;//abiertos está vacio -> no hay solución
+                }
+            }
+            //comprobar si objetivo
+            goal = current.objetivo();
+
+            if (current.profundidad() == profundidadLimite){
+                //expandir en frontera
+                limiteAlcanzado = true;
+                frontera.add(current);
+            }else{
+                //expandir
+                posibles = current.posiblesMovimientos();
+                for (int i : posibles){
+                    newPuzzle = current.copiaYMueveInseguro(i);
+                    if (!memoria.isViewed(newPuzzle)){
+                        abiertos.add(1,newPuzzle);
+                    }
+                }
+                cerrados.add(0,current);
+            }
+
+            //mover current a cerrados.
+            abiertos.remove(current);
+        }
+        pasos = plan(cerrados, this);
+        System.out.println(memoria);
+        return pasos;
+    }
+
+    /*---------------------------------------------------------------------------*/
+
+    public ArrayList<Integer> busquedaPrimeroAnchura(){
+        return this.busquedaPrimeroAnchura(null, null,null,null);
+    }
+
+    public ArrayList<Integer> busquedaPrimeroAnchura(ArrayList<NPuzzle> abiertos, ArrayList<NPuzzle> cerrados, Timer timer, Memory memoria){
+        if ((abiertos == null && cerrados != null) || (cerrados == null && abiertos != null))
+            throw new RuntimeException("Cerrados y abiertos deben ser ambos null, o inicializados");
+        if (abiertos == null){
+            abiertos = new ArrayList<>();
+            abiertos.add(this);
+        }
+
+        if (cerrados == null){
+            cerrados = new ArrayList<>();
+        }
+
+        if (memoria == null){
+            memoria = new Memory();
+            memoria.isViewed(this);
+        }
+
+        if (timer == null) timer = new Timer();
+
+        ArrayList<Integer> pasos = new ArrayList<>(),
+                posibles;
+        NPuzzle current, newPuzzle;
+        boolean goal = false;
         while (!goal){
             //comprobar tiempo
             if (timer.duration() > Main.TMAXmillis) return pasos;
