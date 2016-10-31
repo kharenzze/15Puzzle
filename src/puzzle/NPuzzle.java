@@ -49,6 +49,11 @@ public class NPuzzle {
     static int raiz;
 
     /**
+     * Posición del hueco
+     */
+    int posicionHueco;
+
+    /**
      * CTes. para las direcciones del hueco
      */
     public static final int ARRIBA = 1;
@@ -83,9 +88,14 @@ public class NPuzzle {
         //Leemos el tablero de un fichero y si no podemos lo generamos 
         //aleatoriamente
         try {
+            int number,i=0;
             Scanner scanner = new Scanner(new File(fichero));
-            while (scanner.hasNextInt())
-                tablero.add(scanner.nextInt());
+            while(scanner.hasNextInt()){
+                number = scanner.nextInt();
+                tablero.add(number);
+                if (number == 0) this.posicionHueco = i;
+                i++;
+            }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(NPuzzle.class.getName()).log(Level.SEVERE, null, ex);
             //Si ha falado la lectura del fichero,
@@ -141,6 +151,7 @@ public class NPuzzle {
         for (int i = 0; i < this.n + 1; i++)
             this.tablero.add(puzzle.tablero.get(i));
 
+        this.posicionHueco = puzzle.posicionHueco;
         //Iniciamos el padre del nodo 
         this.padre = puzzle.padre;
         //Iniciamos el costo del nodo 
@@ -164,10 +175,22 @@ public class NPuzzle {
             permutacion.add(i);
         //Los mezclamos y los devolvemos
         java.util.Collections.shuffle(permutacion);
+        int hueco=0;
+        while (permutacion.get(hueco)!=0) hueco++;
+        this.posicionHueco = hueco;
         return permutacion;
     }
     /*---------------------------------------------------------------------------*/
-
+    /**
+     * Busca el hueco dentro de un array y devuelve la posicioón
+     * @return posicion del hueco
+     */
+    private int  buscarHueco(){
+        int hueco=0;
+        while (this.tablero.get(hueco)!=0) hueco++;
+        return hueco;
+    }
+    /*---------------------------------------------------------------------------*/
     /**
      * Esta función calcula el valor f del nodo como la suma del coste (g) y la
      * herutistica (h)
@@ -373,7 +396,12 @@ public class NPuzzle {
         tablero.set(j, aux);
     }
     /*---------------------------------------------------------------------------*/
-
+    private void moveHoleTo(int dest){
+        tablero.set(this.posicionHueco, tablero.get(dest));
+        tablero.set(dest,0);
+        this.posicionHueco = dest;
+    }
+    /*---------------------------------------------------------------------------*/
     /**
      * Obtenemos el movimiento inversodel que le pasamos como parámetro
      *
@@ -397,50 +425,52 @@ public class NPuzzle {
      */
     public boolean mueve(int movimiento) {
 
-        //coger pos hueco
-        int hueco = 0;
-        while (this.tablero.get(hueco) != 0) hueco++;
+        //Cogemos la raiz de n+1 pues nos hará falta para mirar movimientos válidos.
 
-        if (movimiento == IZQUIERDA) {
-            if (hueco == 0 || hueco % raiz == 0)
+        if (movimiento==IZQUIERDA) {
+            if (this.posicionHueco==0 || this.posicionHueco%raiz==0)
                 return false;
             else {
-                this.swap(hueco - 1, hueco);
+//                this.swap(this.posicionHueco-1,this.posicionHueco);
+                this.moveHoleTo(this.posicionHueco-1);
                 this.g++; //actualizamos función costo
-                this.h = heuristica(); //actualizamos función heurística
-                this.padre = inverso(movimiento);
+                this.h=heuristica(); //actualizamos función heurística
+                this.padre=inverso(movimiento);
                 return true;
             }
-        } else if (movimiento == DERECHA) {
-            if (hueco == n || (hueco + 1) % raiz == 0)
+        } else if (movimiento==DERECHA) {
+            if (this.posicionHueco==n || (this.posicionHueco+1)%raiz==0)
                 return false;
             else {
-                this.swap(hueco + 1, hueco);
+//                this.swap(this.posicionHueco+1,this.posicionHueco);
+                this.moveHoleTo(this.posicionHueco+1);
                 this.g++; //actualizamos función costo
-                this.h = heuristica(); //actualizamos función heurística
-                this.padre = inverso(movimiento);
-                return true;
-            }
-
-        } else if (movimiento == ARRIBA) {
-            if (hueco >= 0 && hueco < raiz)
-                return false;
-            else {
-                this.swap(hueco - raiz, hueco);
-                this.g++; //actualizamos función costo
-                this.h = heuristica(); //actualizamos función heurística
-                this.padre = inverso(movimiento);
+                this.h=heuristica(); //actualizamos función heurística
+                this.padre=inverso(movimiento);
                 return true;
             }
 
-        } else if (movimiento == ABAJO) {
-            if (hueco <= n && hueco >= raiz * (raiz - 1))
+        } else if (movimiento==ARRIBA) {
+            if (this.posicionHueco>=0 && this.posicionHueco<raiz)
                 return false;
             else {
-                this.swap(hueco + raiz, hueco);
+//                this.swap(this.posicionHueco-raiz,this.posicionHueco);
+                this.moveHoleTo(this.posicionHueco-raiz);
                 this.g++; //actualizamos función costo
-                this.h = heuristica(); //actualizamos función heurística
-                this.padre = inverso(movimiento);
+                this.h=heuristica(); //actualizamos función heurística
+                this.padre=inverso(movimiento);
+                return true;
+            }
+
+        } else if (movimiento==ABAJO) {
+            if (this.posicionHueco<=n && this.posicionHueco>=raiz*(raiz-1))
+                return false;
+            else {
+//                this.swap(this.posicionHueco+raiz,this.posicionHueco);
+                this.moveHoleTo(this.posicionHueco+raiz);
+                this.g++; //actualizamos función costo
+                this.h=heuristica(); //actualizamos función heurística
+                this.padre=inverso(movimiento);
                 return true;
             }
 
