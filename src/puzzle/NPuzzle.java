@@ -161,6 +161,19 @@ public class NPuzzle {
     }
     /*---------------------------------------------------------------------------*/
 
+    public NPuzzle copiaYMueve(int movimiento){
+        NPuzzle copia = new NPuzzle(this);
+        copia.mueve(movimiento);
+        return copia;
+    }
+
+    public NPuzzle copiaYMueveInseguro(int movimiento){
+        NPuzzle copia = new NPuzzle(this);
+        copia.mueveInseguro(movimiento);
+        return copia;
+    }
+
+    /*---------------------------------------------------------------------------*/
     /**
      * Este procedimiento genera una permutación aleatorio de tamaño n y lo
      * devuelve en un ArrayList.
@@ -650,8 +663,7 @@ public class NPuzzle {
             //expandir
             posibles = current.posiblesMovimientos();
             for (int i : posibles){
-                newPuzzle = new NPuzzle(current);
-                newPuzzle.mueveInseguro(i);
+                newPuzzle = current.copiaYMueveInseguro(i);
                 if (!memoria.isViewed(newPuzzle)){
                     abiertos.add(1,newPuzzle);
                 }
