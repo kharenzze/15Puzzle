@@ -685,4 +685,49 @@ public class NPuzzle {
         return pasos;
     }
 
+        /*---------------------------------------------------------------------------*/
+
+    public ArrayList<Integer> busquedaPrimeroAnchura(){
+        ArrayList<NPuzzle> abiertos = new ArrayList<>(),
+                cerrados= new ArrayList<>();
+        Memory memoria = new Memory();
+        ArrayList<Integer> pasos = new ArrayList<>();
+        NPuzzle current, newPuzzle;
+        boolean goal = false;
+
+        memoria.isViewed(this);
+        abiertos.add(this);
+        ArrayList<Integer> posibles = new ArrayList<>();
+
+        Timer timer = new Timer();
+        while (!goal){
+            //comprobar tiempo
+            if (timer.duration() > Main.TMAXmillis) return pasos;
+
+            //seleccionar
+            try {
+                current = abiertos.get(0);
+            }catch (Error e){
+                //abiertos está vacio -> no hay solución
+                return pasos;
+            }
+
+            //comprobar si objetivo
+            goal = current.objetivo();
+
+            //expandir
+            posibles = current.posiblesMovimientos();
+            for (int i : posibles){
+                newPuzzle = current.copiaYMueveInseguro(i);
+                if (!memoria.isViewed(newPuzzle)){
+                    abiertos.add(newPuzzle);
+                }
+            }
+            //mover current a cerrados.
+            abiertos.remove(current);
+            cerrados.add(0,current);
+        }
+        pasos = plan(cerrados, this);
+        return pasos;
+    }
 }
