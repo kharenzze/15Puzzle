@@ -47,7 +47,7 @@ public class Main {
         long tiempo_inicial=System.currentTimeMillis();
         NPuzzle copia=new NPuzzle(puzzle);
         ArrayList<Integer> movs=null;
-        ArrayList<Integer> nodos=copia.busquedaPrimeroAnchura();
+        ArrayList<Integer> nodos=copia.busquedaProfundidadIterativa();
         if (nodos.size()<=0)
             System.out.println("Solución NO encontrada.");
         else {
