@@ -883,5 +883,49 @@ public class NPuzzle {
         return pasos;
     }
 
+    public ArrayList<Integer> escaladaSimple(){
+
+        ArrayList<NPuzzle> abiertos = new ArrayList<>(),
+                cerrados= new ArrayList<>();
+        Memory memoria = new Memory();
+        ArrayList<Integer> pasos = new ArrayList<>(),
+                posibles;
+        NPuzzle current, newPuzzle;
+        boolean goal = false;
+
+        memoria.isViewed(this);
+        abiertos.add(this);
+
+        Timer timer = new Timer();
+        while (!goal){
+            //comprobar tiempo
+            if (timer.duration() > Main.TMAXmillis) return pasos;
+
+            //seleccionar
+            try {
+                current = abiertos.get(0);
+            }catch (Exception e){
+                return pasos;//abiertos está vacio -> no hay solución
+            }
+            //comprobar si objetivo
+            goal = current.objetivo();
+
+            //expandir
+            posibles = current.posiblesMovimientos();
+            for (int i : posibles){
+                newPuzzle = current.copiaYMueveInseguro(i);
+//                System.out.println(newPuzzle.h + "vs" + current.h);
+                if (!memoria.isViewed(newPuzzle) && newPuzzle.h <= current.h){
+                    abiertos.add(1,newPuzzle);
+                }
+            }
+            //mover current a cerrados.
+            abiertos.remove(current);
+            cerrados.add(0,current);
+        }
+        pasos = plan(cerrados, this);
+        System.out.println(memoria);
+        return pasos;
+    }
 
 }
