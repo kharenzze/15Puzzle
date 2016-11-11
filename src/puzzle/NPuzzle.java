@@ -917,6 +917,7 @@ public class NPuzzle {
 //                System.out.println(newPuzzle.h + "vs" + current.h);
                 if (!memoria.isViewed(newPuzzle) && newPuzzle.h <= current.h){
                     abiertos.add(1,newPuzzle);
+                    break;
                 }
             }
             //mover current a cerrados.
