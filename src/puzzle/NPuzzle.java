@@ -929,4 +929,63 @@ public class NPuzzle {
         return pasos;
     }
 
+    public ArrayList<Integer> busquedaPrimeroMejorA(){
+
+        ArrayList<NPuzzle> abiertos = new ArrayList<>(),
+                cerrados= new ArrayList<>();
+        Memory memoria = new Memory();
+        ArrayList<Integer> pasos = new ArrayList<>(),
+                posibles;
+        NPuzzle current, newPuzzle;
+        boolean goal = false;
+
+        memoria.isViewed(this);
+        abiertos.add(this);
+
+        Timer timer = new Timer();
+
+        while (!goal){
+            //comprobar tiempo
+            if (timer.duration() > Main.TMAXmillis) return pasos;
+
+            //seleccionar
+            try {
+                current = abiertos.get(0);
+            }catch (Exception e){
+                return pasos;//abiertos está vacio -> no hay solución
+            }
+            //comprobar si objetivo
+            goal = current.objetivo();
+
+            //expandir
+            posibles = current.posiblesMovimientos();
+            for (int i : posibles){
+                newPuzzle = current.copiaYMueveInseguro(i);
+                if (!memoria.isViewed(newPuzzle)) {
+                    // se añade el nuevo puzzle, teniendo en cuenta que el vector ABIERTOS esta ordenado
+                    ListIterator<NPuzzle> iterator = abiertos.listIterator();
+                    NPuzzle pointer;
+                    try {
+                        int f = newPuzzle.f();
+                        while (true){
+                            pointer = iterator.next();
+                            if (f < pointer.f()) {
+                                iterator.add(newPuzzle);
+                                break;
+                            }
+                        }
+                    } catch (NoSuchElementException e) {
+                        iterator.add(newPuzzle);
+                    }
+                }
+            }
+            //mover current a cerrados.
+            abiertos.remove(current);
+            cerrados.add(0,current);
+        }
+        pasos = plan(cerrados, this);
+        System.out.println(memoria);
+        return pasos;
+    }
+
 }
